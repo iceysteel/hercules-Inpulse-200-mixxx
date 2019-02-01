@@ -2,13 +2,34 @@ function THEMAPPING() {}
 
 THEMAPPING.scratching = [false, false];
 
+THEMAPPING.speed0 = 550;
+THEMAPPING.speed1 = 550;
+
+THEMAPPING.wheelSearch0 = function (channel, control, value, status) {
+	if (value == 0x7F){
+		THEMAPPING.speed0 = 100;
+	}
+	else{
+		THEMAPPING.speed0 = 550;
+	}
+}
+
+THEMAPPING.wheelSearch1 = function (channel, control, value, status) {
+	if (value == 0x7F){
+		THEMAPPING.speed1 = 100;
+	}
+	else{
+		THEMAPPING.speed1 = 550;
+	}
+}
+
 // The button that enables/disables scratching
 THEMAPPING.wheelTouch0 = function (channel, control, value, status) {
 
     if (value == 0x7F && !THEMAPPING.scratching[0]) { // catch only first touch
        var alpha = 1.0/8;
        var beta = alpha/32;
-       engine.scratchEnable(1, 300, 33+1/3, alpha, beta);
+       engine.scratchEnable(1, THEMAPPING.speed0, 33+1/3, alpha, beta);
        // Keep track of whether we're scratching on this virtual deck
        THEMAPPING.scratching[0] = true;
 
@@ -25,7 +46,8 @@ THEMAPPING.wheelTouch1 = function (channel, control, value, status) {
     if (value == 0x7F && !THEMAPPING.scratching[1]) { // catch only first touch
        var alpha = 1.0/8;
        var beta = alpha/32;
-       engine.scratchEnable(2, 300, 33+1/3, alpha, beta);
+       //old value for speed was 300
+       engine.scratchEnable(2, THEMAPPING.speed1, 33+1/3, alpha, beta);
        // Keep track of whether we're scratching on this virtual deck
        THEMAPPING.scratching[1] = true;
 
@@ -37,11 +59,13 @@ THEMAPPING.wheelTouch1 = function (channel, control, value, status) {
 
 };
 
+
+
  
 THEMAPPING.wheelTurn0 = function (channel, control, value, status, group) {
     
 	// See if we're on scratching.
-	//if (THEMAPPING.scratching[0] == false )  return;
+	if (THEMAPPING.scratching[0] == false )  return;
    
 	var newValue;
 	if (value-64 > 0) newValue = value-128; // 7F, 7E, 7D
